@@ -5,6 +5,7 @@
   </PropertyGroup>
 
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Custom' " />
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Models\" />
