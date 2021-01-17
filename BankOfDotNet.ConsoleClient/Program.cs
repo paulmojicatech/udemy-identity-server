@@ -16,29 +16,57 @@ namespace BankOfDotNet.ConsoleClient
         private static async Task MainAsync()
         {
             var httpClient = new HttpClient();
-            var discovery = await httpClient.GetDiscoveryDocumentAsync("https://localhost:5000");
-            if (discovery.IsError)
+
+            // Resource Owner Flow
+            var discoveryRO = await httpClient.GetDiscoveryDocumentAsync("https://localhost:5000");
+            if (discoveryRO.IsError)
             {
-                Console.WriteLine(discovery.Error);
+                Console.WriteLine("\n" + discoveryRO.Error);
                 return;
             }
 
-            var tokensReq = new ClientCredentialsTokenRequest
+            var tokensReqRO = new PasswordTokenRequest
             {
-                Address = discovery.TokenEndpoint,
-                ClientId = "client",
+                Address = discoveryRO.TokenEndpoint,
+                ClientId = "ro.client",
                 ClientSecret = "secret",
-                GrantType = GrantTypes.ClientCredentials,
+                GrantType = GrantTypes.Password,
+                UserName = "Kirstin",
+                Password = "password2",
                 Scope = "bankOfDotNetApi"
             };
-            var token = await httpClient.RequestClientCredentialsTokenAsync(tokensReq);
-            if (token.IsError)
-            {
-                Console.WriteLine(token.Error);
-            }
-            Console.WriteLine("\n" + token.Json + "\n");
 
-            httpClient.SetBearerToken(token.AccessToken);
+            var tokenRO = await httpClient.RequestPasswordTokenAsync(tokensReqRO);
+            if (tokenRO.IsError)
+            {
+                Console.WriteLine("\n" + tokenRO.Error);
+            }
+            Console.WriteLine("\n" + tokenRO.Json + "\n");
+            httpClient.SetBearerToken(tokenRO.AccessToken);
+            // Client Credentials Flow
+            //var discovery = await httpClient.GetDiscoveryDocumentAsync("https://localhost:5000");
+            //if (discovery.IsError)
+            //{
+            //    Console.WriteLine(discovery.Error);
+            //    return;
+            //}
+
+            //var tokensReq = new ClientCredentialsTokenRequest
+            //{
+            //    Address = discovery.TokenEndpoint,
+            //    ClientId = "client",
+            //    ClientSecret = "secret",
+            //    GrantType = GrantTypes.ClientCredentials,
+            //    Scope = "bankOfDotNetApi"
+            //};
+            //var token = await httpClient.RequestClientCredentialsTokenAsync(tokensReq);
+            //if (token.IsError)
+            //{
+            //    Console.WriteLine(token.Error);
+            //}
+            //Console.WriteLine("\n" + token.Json + "\n");
+
+            //httpClient.SetBearerToken(tokenRO.AccessToken);
             var customerInfo = new StringContent(
                 JsonConvert.SerializeObject(
                     new

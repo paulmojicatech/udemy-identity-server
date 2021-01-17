@@ -20,7 +20,8 @@ namespace BankOfDotNet.IdentityServer
                 .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(Config.GetAllApiResources())
                 .AddInMemoryClients(Config.GetClients())
-                .AddInMemoryApiScopes(Config.GetApiScopes());
+                .AddInMemoryApiScopes(Config.GetApiScopes())
+                .AddTestUsers(Config.GetUsers());
 
         }
 
